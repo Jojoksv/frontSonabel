@@ -12,7 +12,12 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
     "axios": "^1.7.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^11.11.17",
     "ldrs": "^1.0.2",
     "lucide-react": "^0.453.0",
     "react": "^18.3.1",
@@ -22,6 +27,8 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.24.1",
     "react-transition-group": "^4.4.5",
+    "tailwind-merge": "^2.5.5",
+    "three": "^0.170.0",
     "zod": "^3.23.8",
     "zustand": "^4.5.4"
   },

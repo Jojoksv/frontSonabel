@@ -5,8 +5,6 @@ import authRoutes from "./authRoutes.jsx";
 
 const NotFound = React.lazy(() => import('../pages/notFound/index.jsx'))
 
-const publicRoutes = [...authRoutes]
-
 const createRoutesElements = (element) => {
     const Element = element;
     return(
@@ -20,7 +18,7 @@ const renderRoutes = createBrowserRouter([
     {
         path: '/',
         element: <AuthLayout />,
-        children: publicRoutes.map(({index, path, element}) => ({
+        children: authRoutes.map(({index, path, element}) => ({
             ...(index ? {index} : {path}),
             element: createRoutesElements(element),
         }))
