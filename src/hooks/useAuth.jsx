@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { endPoints as navigationRoutes } from "../routes/endPoints";
 import { endPoints } from "../data/client/endPoints";
 import { toast } from "react-toastify";
+import axiosInstance from "../data/client/axiosInstance";
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
@@ -11,7 +11,7 @@ export const useAuth = () => {
 
   const loginMutation = useMutation({
     mutationFn: async (data) => {
-      await axios.post(endPoints.Auth.LOGIN, data).then((res) => {
+      await axiosInstance.post(endPoints.Auth.LOGIN, data).then((res) => {
         console.log(res.data.message);
         localStorage.setItem("token", res.data.token);
         queryClient.setQueryData(["user"], res.data.user);
