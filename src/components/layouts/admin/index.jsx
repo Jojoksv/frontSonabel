@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom"
 
-function AuthLayout() {
+function AdminLayout() {
   return (
-    <div className="authBody">
+    <div>
         <div>
           <div>
             <Outlet />
@@ -12,4 +12,4 @@ function AuthLayout() {
   )
 }
 
-export default AuthLayout
+export default AdminLayout

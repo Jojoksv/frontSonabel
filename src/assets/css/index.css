@@ -1,3 +1,101 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* login form css */
+.authBody {
+    font-family: 'Poppins', sans-serif;
+    background-color: #0a192f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .form-container {
+    background: #112240;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 350px;
+    text-align: center;
+    color: #ccd6f6;
+  }
+  
+  .form-header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.2rem;
+    color: #64ffda;
+  }
+  
+  .form-header small {
+    font-size: 0.9rem;
+    color: #a8b2d1;
+  }
+  
+  .input-wrapper {
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+  
+  .input-wrapper label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    color: #a8b2d1;
+  }
+  
+  .input-wrapper input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #233554;
+    background: #0a192f;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #ccd6f6;
+    transition: border 0.3s ease-in-out;
+  }
+  
+  .input-wrapper input:focus {
+    border-color: #64ffda;
+    outline: none;
+  }
+  
+  .text-red-500 {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+  }
+  
+  button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    background: #64ffda;
+    color: #0a192f;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+  }
+  
+  button:hover {
+    background: #52e0c4;
+    transform: translateY(-2px);
+  }
+  
+  button:disabled {
+    background: #3d846f;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 400px) {
+    .form-container {
+      width: 90%;
+    }
+  }
+  
