@@ -121,14 +121,14 @@ export default function Dashboard() {
         </div>
         <div className="flex flex-wrap gap-3">
           <Link
-            to="/missions/new"
+            to={endPoints.Admin.NEWMISSION}
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
           >
             <Plus className="h-5 w-5 mr-2" />
             Nouvelle mission
           </Link>
           <Link
-            to="/reports/new"
+            to={endPoints.Admin.REPPORT}
             className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
           >
             <FileCheck className="h-5 w-5 mr-2" />
@@ -138,9 +138,9 @@ export default function Dashboard() {
       </div>
 
       {/* Statistiques principales */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Missions */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <Link to={endPoints.Admin.MISSION} className="bg-white rounded-xl shadow-sm p-3 border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div className="bg-blue-100 p-3 rounded-lg">
@@ -188,10 +188,10 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Personnel */}
-        <Link to={`${endPoints.Admin.DASHBOARD}/${endPoints.Admin.PERSONNEL}`} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <Link to={`${endPoints.Admin.DASHBOARD}/${endPoints.Admin.PERSONNEL}`} className="bg-white rounded-xl shadow-sm p-3 border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div className="bg-green-100 p-3 rounded-lg">
@@ -229,47 +229,8 @@ export default function Dashboard() {
           </div>
         </Link>
 
-        {/* Dépenses */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <div className="bg-purple-100 p-3 rounded-lg">
-                <FileText className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="ml-4">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Dépenses
-                </h3>
-                <p className="text-gray-600 text-sm">Suivi financier</p>
-              </div>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Total</span>
-              <span className="text-2xl font-bold text-gray-900">
-                {stats.expenses.totalAmount.toLocaleString()} FCFA
-              </span>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center bg-purple-50 p-2 rounded-lg">
-                <span className="text-purple-700">Ce mois</span>
-                <span className="font-semibold text-purple-700">
-                  {stats.expenses.thisMonth.toLocaleString()} FCFA
-                </span>
-              </div>
-              <div className="flex justify-between items-center bg-yellow-50 p-2 rounded-lg">
-                <span className="text-yellow-700">En attente</span>
-                <span className="font-semibold text-yellow-700">
-                  {stats.expenses.pending}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Rapports */}
-        <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+        <div className="bg-white rounded-xl shadow-sm p-3 border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div className="bg-orange-100 p-3 rounded-lg">

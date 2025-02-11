@@ -70,7 +70,7 @@
     display: block;
   }
   
-  button {
+  .authBody button {
     width: 100%;
     padding: 12px;
     font-size: 1rem;
