@@ -112,7 +112,7 @@ export default function Dashboard() {
   // Fonction pour calculer les statistiques des missions
   const getMissionStats = (missions) => {
     const stats = {
-      total: missions.length,
+      total: missions?.length,
       pending: 0,
       completed: 0,
       inProgress: 0,
