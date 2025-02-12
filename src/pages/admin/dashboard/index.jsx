@@ -10,10 +10,11 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { endPoints } from "../../../routes/endPoints";
+import { useMissions } from "../../../hooks/useMission";
 
 export default function Dashboard() {
   // Mock data - à remplacer par les données réelles de l'API
-  const stats = {
+  const statis = {
     missions: {
       total: 24,
       pending: 8,
@@ -108,6 +109,28 @@ export default function Dashboard() {
     },
   ];
 
+  // Fonction pour calculer les statistiques des missions
+  const getMissionStats = (missions) => {
+    const stats = {
+      total: missions.length,
+      pending: 0,
+      completed: 0,
+      inProgress: 0,
+    };
+
+    // Parcourir les missions et compter les différentes catégories
+    missions.forEach((mission) => {
+      if (mission.status === "En attente") stats.pending += 1;
+      if (mission.status === "Terminé") stats.completed += 1;
+      if (mission.status === "En cours") stats.inProgress += 1;
+    });
+
+    return stats;
+  };
+
+  const { data: missionsData } = useMissions();
+  const stats = getMissionStats(missionsData);
+
   return (
     <div className="space-y-6 p-6 bg-gray-50">
       {/* En-tête avec actions rapides */}
@@ -139,7 +162,10 @@ export default function Dashboard() {
       {/* Statistiques principales */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Missions */}
-        <Link to={endPoints.Admin.MISSION} className="bg-white rounded-xl shadow-sm p-3 border border-gray-100">
+        <Link
+          to={endPoints.Admin.MISSION}
+          className="bg-white rounded-xl shadow-sm p-3 border border-gray-100"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div className="bg-blue-100 p-3 rounded-lg">
@@ -157,32 +183,26 @@ export default function Dashboard() {
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Total</span>
               <span className="text-2xl font-bold text-gray-900">
-                {stats.missions.total}
+                {stats.total}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="flex justify-between items-center bg-yellow-50 p-2 rounded-lg">
                 <span className="text-yellow-700">En attente</span>
                 <span className="font-semibold text-yellow-700">
-                  {stats.missions.pending}
+                  {stats.pending}
                 </span>
               </div>
               <div className="flex justify-between items-center bg-green-50 p-2 rounded-lg">
                 <span className="text-green-700">Terminées</span>
                 <span className="font-semibold text-green-700">
-                  {stats.missions.completed}
+                  {stats.completed}
                 </span>
               </div>
               <div className="flex justify-between items-center bg-blue-50 p-2 rounded-lg">
                 <span className="text-blue-700">En cours</span>
                 <span className="font-semibold text-blue-700">
-                  {stats.missions.inProgress}
-                </span>
-              </div>
-              <div className="flex justify-between items-center bg-red-50 p-2 rounded-lg">
-                <span className="text-red-700">Rejetées</span>
-                <span className="font-semibold text-red-700">
-                  {stats.missions.rejected}
+                  {stats.inProgress}
                 </span>
               </div>
             </div>
@@ -190,7 +210,10 @@ export default function Dashboard() {
         </Link>
 
         {/* Personnel */}
-        <Link to={`${endPoints.Admin.DASHBOARD}/${endPoints.Admin.PERSONNEL}`} className="bg-white rounded-xl shadow-sm p-3 border border-gray-100">
+        <Link
+          to={`${endPoints.Admin.DASHBOARD}/${endPoints.Admin.PERSONNEL}`}
+          className="bg-white rounded-xl shadow-sm p-3 border border-gray-100"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div className="bg-green-100 p-3 rounded-lg">
@@ -229,7 +252,10 @@ export default function Dashboard() {
         </Link>
 
         {/* Rapports */}
-        <Link to={`${endPoints.Admin.DASHBOARD}/${endPoints.Admin.REPPORT}`} className="bg-white rounded-xl shadow-sm p-3 border border-gray-100">
+        <Link
+          to={`${endPoints.Admin.DASHBOARD}/${endPoints.Admin.REPPORT}`}
+          className="bg-white rounded-xl shadow-sm p-3 border border-gray-100"
+        >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div className="bg-orange-100 p-3 rounded-lg">
