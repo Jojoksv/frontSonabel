@@ -14,7 +14,7 @@ import { useMissions } from "../../../hooks/useMission";
 
 export default function Dashboard() {
   // Mock data - à remplacer par les données réelles de l'API
-  const statis = {
+  const stats = {
     missions: {
       total: 24,
       pending: 8,
@@ -129,7 +129,7 @@ export default function Dashboard() {
   };
 
   const { data: missionsData } = useMissions();
-  const stats = getMissionStats(missionsData);
+  const statis = getMissionStats(missionsData);
 
   return (
     <div className="space-y-6 p-6 bg-gray-50">
