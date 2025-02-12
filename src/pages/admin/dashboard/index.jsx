@@ -1,6 +1,5 @@
 import {
   Briefcase,
-  FileText,
   ClipboardList,
   Plus,
   Clock,
@@ -230,7 +229,7 @@ export default function Dashboard() {
         </Link>
 
         {/* Rapports */}
-        <div className="bg-white rounded-xl shadow-sm p-3 border border-gray-100">
+        <Link to={`${endPoints.Admin.DASHBOARD}/${endPoints.Admin.REPPORT}`} className="bg-white rounded-xl shadow-sm p-3 border border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div className="bg-orange-100 p-3 rounded-lg">
@@ -266,7 +265,7 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* Section principale avec 3 colonnes */}

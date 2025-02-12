@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useAddMission, useMissions } from '../../../hooks/useMission';
+import { toast, ToastContainer } from 'react-toastify';
 
 const MissionsPage = () => {
-  const [missions, setMissions] = useState([]);
+  // const [missions, setMissions] = useState([]);
   const [newMission, setNewMission] = useState({
     title: '',
     description: '',
@@ -17,102 +18,96 @@ const MissionsPage = () => {
   });
   const [showForm, setShowForm] = useState(false); // Etat pour afficher/masquer le formulaire
 
-  const missionsData = [
-    {
-      id: 1,
-      title: 'Mission de développement frontend',
-      responsible: 'John Doe',
-      destination: 'Paris, France',
-      missionObject: 'Développement de l\'interface utilisateur pour la plateforme',
-      priority: 'high',
-      startDate: '2025-02-01',
-      endDate: '2025-02-10',
-      status: 'completed',
-    },
-    {
-      id: 2,
-      title: 'Mission de recherche agronomique',
-      responsible: 'Jane Smith',
-      destination: 'Ouagadougou, Burkina Faso',
-      missionObject: 'Etude des meilleures pratiques agricoles',
-      priority: 'medium',
-      startDate: '2025-03-01',
-      endDate: '2025-03-10',
-      status: 'in-progress',
-    },
-    {
-      id: 3,
-      title: 'Mission de formation des équipes',
-      responsible: 'Alice Brown',
-      destination: 'Bamako, Mali',
-      missionObject: 'Formation des équipes locales sur l\'utilisation de la plateforme',
-      priority: 'low',
-      startDate: '2025-04-15',
-      endDate: '2025-04-20',
-      status: 'pending',
-    },
-    {
-      id: 4,
-      title: 'Mission de partenariat avec des ONG',
-      responsible: 'Mohamed Aloui',
-      destination: 'Accra, Ghana',
-      missionObject: 'Négociation de partenariats avec des ONG locales',
-      priority: 'high',
-      startDate: '2025-05-10',
-      endDate: '2025-05-15',
-      status: 'in-progress',
-    },
-    {
-      id: 5,
-      title: 'Mission de collecte de données',
-      responsible: 'Fatou Diarra',
-      destination: 'Abidjan, Côte d\'Ivoire',
-      missionObject: 'Collecte de données pour une étude sur la production agricole',
-      priority: 'medium',
-      startDate: '2025-06-01',
-      endDate: '2025-06-10',
-      status: 'pending',
-    },
-  ];
+  // const missionsData = [
+  //   {
+  //     id: 1,
+  //     title: 'Mission de développement frontend',
+  //     responsible: 'John Doe',
+  //     destination: 'Paris, France',
+  //     missionObject: 'Développement de l\'interface utilisateur pour la plateforme',
+  //     priority: 'high',
+  //     startDate: '2025-02-01',
+  //     endDate: '2025-02-10',
+  //     status: 'completed',
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'Mission de recherche agronomique',
+  //     responsible: 'Jane Smith',
+  //     destination: 'Ouagadougou, Burkina Faso',
+  //     missionObject: 'Etude des meilleures pratiques agricoles',
+  //     priority: 'medium',
+  //     startDate: '2025-03-01',
+  //     endDate: '2025-03-10',
+  //     status: 'in-progress',
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'Mission de formation des équipes',
+  //     responsible: 'Alice Brown',
+  //     destination: 'Bamako, Mali',
+  //     missionObject: 'Formation des équipes locales sur l\'utilisation de la plateforme',
+  //     priority: 'low',
+  //     startDate: '2025-04-15',
+  //     endDate: '2025-04-20',
+  //     status: 'pending',
+  //   },
+  //   {
+  //     id: 4,
+  //     title: 'Mission de partenariat avec des ONG',
+  //     responsible: 'Mohamed Aloui',
+  //     destination: 'Accra, Ghana',
+  //     missionObject: 'Négociation de partenariats avec des ONG locales',
+  //     priority: 'high',
+  //     startDate: '2025-05-10',
+  //     endDate: '2025-05-15',
+  //     status: 'in-progress',
+  //   },
+  //   {
+  //     id: 5,
+  //     title: 'Mission de collecte de données',
+  //     responsible: 'Fatou Diarra',
+  //     destination: 'Abidjan, Côte d\'Ivoire',
+  //     missionObject: 'Collecte de données pour une étude sur la production agricole',
+  //     priority: 'medium',
+  //     startDate: '2025-06-01',
+  //     endDate: '2025-06-10',
+  //     status: 'pending',
+  //   },
+  // ];
   
-  useEffect(() => {
-    // Appel à l'API pour récupérer les missions
-    fetch('/api/missions')
-      .then(response => response.json())
-      .then(data => setMissions(data))
-      .catch(error => console.error('Error fetching missions:', error));
-  }, []);
+  // useEffect(() => {
+  //   // Appel à l'API pour récupérer les missions
+  //   axiosInstance.get('missions')
+  //     .then(data => setMissions(data))
+  //     .catch(error => console.error('Error fetching missions:', error));
+  // }, []);
 
-  const handleStatusChange = (missionId, newStatus) => {
-    fetch(`/api/missions/${missionId}/status`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ status: newStatus }),
-    })
-      .then(response => response.json())
-      .then(() => {
-        setMissions(missions.map(mission => 
-          mission.id === missionId ? { ...mission, status: newStatus } : mission
-        ));
-      })
-      .catch(error => console.error('Error updating mission status:', error));
-  };
+  // const handleStatusChange = (missionId, newStatus) => {
+  //   fetch(`/api/missions/${missionId}/status`, {
+  //     method: 'PUT',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ status: newStatus }),
+  //   })
+  //     .then(response => response.json())
+  //     .then(() => {
+  //       setMissions(missions.map(mission => 
+  //         mission.id === missionId ? { ...mission, status: newStatus } : mission
+  //       ));
+  //     })
+  //     .catch(error => console.error('Error updating mission status:', error));
+  // };
+
+  const { data: missionsData } = useMissions();
+  const { mutate: addMission } = useAddMission();
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    // Appel API pour ajouter une nouvelle mission
-    fetch('/api/missions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newMission),
-    })
-      .then(response => response.json())
-      .then(data => {
-        setMissions([...missions, data]);
+    addMission(newMission, {
+      onSuccess: () => {
+        toast('Mission ajoutée avec succès', { type: 'success' });
         setNewMission({
           title: '',
           description: '',
@@ -125,13 +120,16 @@ const MissionsPage = () => {
           assignment: '',
           observations: '',
         });
-        setShowForm(false); // Masquer le formulaire après l'ajout
-      })
-      .catch(error => console.error('Error adding mission:', error));
+      },
+    });
   };
+
+  // if (isLoading) return <p>Chargement des missions...</p>;
+  // if (error) return <p>Erreur lors du chargement des missions</p>;
 
   return (
     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0a192f' }}>
+      <ToastContainer />
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-semibold text-white">Missions</h1>
         <button
@@ -154,6 +152,18 @@ const MissionsPage = () => {
               id="title"
               value={newMission.title}
               onChange={(e) => setNewMission({ ...newMission, title: e.target.value })}
+              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-lg"
+              required
+            />
+          </div>
+
+          <div className="mt-4">
+            <label htmlFor="description" className="text-sm font-semibold text-gray-700">Description de la mission</label>
+            <input
+              type="text"
+              id="description"
+              value={newMission.description}
+              onChange={(e) => setNewMission({ ...newMission, description: e.target.value })}
               className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-lg"
               required
             />
@@ -288,7 +298,7 @@ const MissionsPage = () => {
       </tr>
     </thead>
     <tbody className="text-gray-700">
-      {missionsData.map((mission) => (
+      {missionsData && missionsData.map((mission) => (
         <tr key={mission.id} className="odd:bg-gray-50 hover:bg-gray-100 border-b">
           <td className="px-6 py-3">{mission.title}</td>
           <td className="px-6 py-3">{mission.responsible}</td>
