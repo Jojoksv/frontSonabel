@@ -129,7 +129,7 @@ export default function Dashboard() {
   };
 
   const { data: missionsData } = useMissions();
-  const statis = getMissionStats(missionsData);
+  // const statis = getMissionStats(missionsData);
 
   return (
     <div className="space-y-6 p-6 bg-gray-50">
