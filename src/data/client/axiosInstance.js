@@ -5,7 +5,7 @@ const ENV = import.meta.env.VITE_ENV;
 
 const cureentUrl = ENV === "PROD" ? url : "http://localhost:3000";
 
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
     baseURL: cureentUrl,
     timeout: 10000,
     headers: {

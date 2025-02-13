@@ -8,8 +8,8 @@ export default defineConfig({
   server: {
     port: 5174,
     proxy:
-      process.env.VITE_REACT_APP_ENV === "DEV"
-        ? 
+      // process.env.VITE_REACT_APP_ENV === "DEV"
+        // ? 
         {
             "/api": {
               target: "http://localhost:3000",
@@ -17,6 +17,6 @@ export default defineConfig({
               rewrite: (path) => path.replace(/^\/api/, "/"),
             },
           }
-        : undefined,
+        // : undefined,
   },
 })

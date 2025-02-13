@@ -1,19 +1,39 @@
 import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { axiosInstance } from '../../../data/client/axiosInstance'
+
+const fetchStaffMembers = async () => {
+  const { data } = await axiosInstance.get('/staff');
+  return data;
+};
 
 const StaffPage = () => {
-  const [staffMembers, setStaffMembers] = useState([
-    { id: 1, name: 'Alice Dupont', role: 'Manager', email: 'alice@example.com', phone: '0123456789', position: 'RH', employeeId: 'EMP001' },
-    { id: 2, name: 'Jean Martin', role: 'Développeur', email: 'jean@example.com', phone: '0987654321', position: 'IT', employeeId: 'EMP002' }
-  ]);
+  const queryClient = useQueryClient();
+  const { data: staffMembers = [], isLoading } = useQuery({
+    queryKey: ['staff'],
+    queryFn: fetchStaffMembers
+  });
+  
+  const addMutation = useMutation({
+    mutationFn: (newStaff) => axiosInstance.post('/staff', newStaff),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['staff'] })
+  });
+  
+  const editMutation = useMutation({
+    mutationFn: ({ id, updatedStaff }) => axiosInstance.put(`/staff/${id}`, updatedStaff),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['staff'] })
+  });
+  
+  const deleteMutation = useMutation({
+    mutationFn: (id) => axiosInstance.delete(`/staff/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['staff'] })
+  });
+  
+
   const [showForm, setShowForm] = useState(false);
   const [editingStaff, setEditingStaff] = useState(null);
   const [newStaff, setNewStaff] = useState({
-    name: '',
-    role: '',
-    email: '',
-    phone: '',
-    position: '',
-    employeeId: ''
+    name: '', role: '', email: '', phone: '', position: '', employeeId: ''
   });
 
   const handleChange = (e) => {
@@ -29,27 +49,25 @@ const StaffPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editingStaff) {
-      setStaffMembers(
-        staffMembers.map((staff) => (staff.id === editingStaff.id ? newStaff : staff))
-      );
-      setEditingStaff(null);
+      editMutation.mutate({ id: editingStaff.id, updatedStaff: newStaff });
     } else {
-      setStaffMembers([...staffMembers, { ...newStaff, id: staffMembers.length + 1 }]);
+      addMutation.mutate(newStaff);
     }
     setShowForm(false);
+    setEditingStaff(null);
     setNewStaff({ name: '', role: '', email: '', phone: '', position: '', employeeId: '' });
   };
+
+  if (isLoading) return <div>Chargement...</div>;
 
   return (
     <div className="mx-auto py-6 px-4 sm:px-6 lg:px-8 bg-[#0a192f] min-h-screen text-white">
       <h1 className="text-4xl font-bold text-center mb-6">Personnel</h1>
-
       <button 
         onClick={() => { setShowForm(!showForm); setEditingStaff(null); }}
         className="mb-6 px-5 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-300">
         {showForm ? 'Fermer le formulaire' : 'Ajouter un employé'}
       </button>
-
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-6 text-gray-900">
           <div className="grid grid-cols-2 gap-4">
@@ -65,7 +83,6 @@ const StaffPage = () => {
           </button>
         </form>
       )}
-
       <div className="overflow-x-auto mb-8">
         <table className="w-full border-collapse bg-white text-gray-900 shadow-lg rounded-lg">
           <thead className="bg-gray-800 text-white">
@@ -88,11 +105,16 @@ const StaffPage = () => {
                 <td className="py-3 px-4">{staff.phone}</td>
                 <td className="py-3 px-4">{staff.position}</td>
                 <td className="py-3 px-4">{staff.employeeId}</td>
-                <td className="py-3 px-4">
+                <td className="py-3 px-4 flex gap-2">
                   <button 
                     onClick={() => handleEdit(staff)}
                     className="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition duration-300">
                     Modifier
+                  </button>
+                  <button 
+                    onClick={() => deleteMutation.mutate(staff.id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-300">
+                    Supprimer
                   </button>
                 </td>
               </tr>
