@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAddMission, useMissions } from "../../../hooks/useMission";
 import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { endPoints } from "../../../routes/endPoints";
+import axiosInstance from "../../../data/client/axiosInstance";
 
 const MissionsPage = () => {
   const [newMission, setNewMission] = useState({
@@ -14,19 +15,39 @@ const MissionsPage = () => {
     priority: "medium",
     startDate: "",
     endDate: "",
-    assignment: "",
+    assignment: [],
     observations: "",
   });
   const [showForm, setShowForm] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const navigate = useNavigate();
 
   const { data: missionsData } = useMissions();
   const { mutate: addMission } = useAddMission();
 
+  // Récupérer les utilisateurs pour remplir les champs responsables et affectations
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axiosInstance.get("/user");
+        const data = await response.data;
+        setUsers(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des utilisateurs", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    addMission(newMission, {
+    const addNewMission = {
+      ...newMission,
+      userId: users.find((user) => user.name === newMission.responsible)?.id,
+    };
+    addMission(addNewMission, {
       onSuccess: () => {
         toast("Mission ajoutée avec succès", { type: "success" });
         setNewMission({
@@ -38,11 +59,29 @@ const MissionsPage = () => {
           priority: "medium",
           startDate: "",
           endDate: "",
-          assignment: "",
+          assignment: [],
           observations: "",
         });
       },
     });
+  };
+
+  const handleAddAssignment = (userMatricule) => {
+    if (!newMission.assignment.includes(userMatricule)) {
+      setNewMission((prevMission) => ({
+        ...prevMission,
+        assignment: [...prevMission.assignment, userMatricule],
+      }));
+    }
+  };
+
+  const handleRemoveAssignment = (userMatricule) => {
+    setNewMission((prevMission) => ({
+      ...prevMission,
+      assignment: prevMission.assignment.filter(
+        (matricule) => matricule !== userMatricule
+      ),
+    }));
   };
 
   return (
@@ -109,7 +148,7 @@ const MissionsPage = () => {
             />
           </div>
 
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <label
               htmlFor="responsible"
               className="text-sm font-semibold text-gray-700"
@@ -126,6 +165,32 @@ const MissionsPage = () => {
               className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-lg"
               required
             />
+          </div> */}
+
+          {/* Select Responsable */}
+          <div className="mt-4">
+            <label
+              htmlFor="responsible"
+              className="text-sm font-semibold text-gray-700"
+            >
+              Responsable
+            </label>
+            <select
+              id="responsible"
+              value={newMission.name}
+              onChange={(e) =>
+                setNewMission({ ...newMission, responsible: e.target.value })
+              }
+              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-lg"
+              required
+            >
+              <option value="">Sélectionner un responsable</option>
+              {users.map((user) => (
+                <option key={user.id} value={user.name}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="mt-4">
@@ -224,7 +289,8 @@ const MissionsPage = () => {
               required
             />
           </div>
-
+          
+          {/* Sélecteur d'affectation */}
           <div className="mt-4">
             <label
               htmlFor="assignment"
@@ -232,15 +298,49 @@ const MissionsPage = () => {
             >
               Affectation
             </label>
-            <input
-              type="text"
-              id="assignment"
-              value={newMission.assignment}
-              onChange={(e) =>
-                setNewMission({ ...newMission, assignment: e.target.value })
-              }
-              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
+            <div className="mt-2">
+              <select
+                id="assignment"
+                onChange={(e) => handleAddAssignment(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="">Sélectionner une affectation</option>
+                {users?.map((user) => (
+                  <option key={user.id} value={user.name}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Affichage des personnes affectées */}
+            <div className="mt-4">
+              <h3 className="font-semibold text-gray-700">
+                Personnes affectées :
+              </h3>
+              <ul className="mt-2">
+                {newMission.assignment.map((userMatricule) => (
+                  <li
+                    key={userMatricule}
+                    className="flex justify-between items-center"
+                  >
+                    <span>
+                      {
+                        users?.find((user) => user.name === userMatricule)
+                          ?.name
+                      }
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveAssignment(userMatricule)}
+                      className="ml-2 text-red-600"
+                    >
+                      Supprimer
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <div className="mt-4">
@@ -278,53 +378,7 @@ const MissionsPage = () => {
         </form>
       )}
 
-      {/* Tableau des missions */}
-      {/* <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-lg shadow-lg">
-          <thead className="bg-gray-200 text-gray-800 uppercase text-sm font-semibold">
-            <tr>
-              <th className="px-6 py-3 text-left">Titre</th>
-              <th className="px-6 py-3 text-left">Responsable</th>
-              <th className="px-6 py-3 text-left">Destination</th>
-              <th className="px-6 py-3 text-left">Objet</th>
-              <th className="px-6 py-3 text-left">Priorité</th>
-              <th className="px-6 py-3 text-left">Date de départ</th>
-              <th className="px-6 py-3 text-left">Date de retour</th>
-              <th className="px-6 py-3 text-left">Statut</th>
-            </tr>
-          </thead>
-          <tbody className="text-gray-700">
-            {missionsData &&
-              missionsData.map((mission) => (
-                <tr
-                  key={mission.id}
-                  className="odd:bg-gray-50 hover:bg-gray-100 border-b font-semibold"
-                >
-                  <td className="px-6 py-3">{mission.title}</td>
-                  <td className="px-6 py-3">{mission.responsible}</td>
-                  <td className="px-6 py-3">{mission.destination}</td>
-                  <td className="px-6 py-3">{mission.missionObject}</td>
-                  <td className="px-6 py-3">{mission.priority}</td>
-                  <td className="px-6 py-3">{mission.startDate}</td>
-                  <td className="px-6 py-3">{mission.endDate}</td>
-                  <td className="px-6 py-3">
-                    <span
-                      className={`text-sm ${
-                        {
-                          "En attente": "text-red-600",
-                          Approuvée: "text-green-600",
-                          Terminé: "text-yellow-600",
-                        }[mission.status] || "text-gray-600"
-                      }`}
-                    >
-                      {mission.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </div> */}
+      {/* Liste des missions */}
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white rounded-lg shadow-lg">
           <thead className="bg-gray-200 text-gray-800 uppercase text-sm font-semibold">
@@ -344,7 +398,11 @@ const MissionsPage = () => {
               <tr
                 key={mission.id}
                 className="odd:bg-gray-50 hover:bg-gray-100 border-b font-semibold cursor-pointer"
-                onClick={() => navigate(`${endPoints.Admin.DASHBOARD}/${endPoints.Admin.MISSION}/${mission.id}`)}
+                onClick={() =>
+                  navigate(
+                    `${endPoints.Admin.DASHBOARD}/${endPoints.Admin.MISSION}/${mission.id}`
+                  )
+                }
               >
                 <td className="px-6 py-3">{mission.title}</td>
                 <td className="px-6 py-3">{mission.responsible}</td>

@@ -109,27 +109,25 @@ export default function Dashboard() {
     },
   ];
 
-  // Fonction pour calculer les statistiques des missions
-  const getMissionStats = (missions) => {
+  const getMissionStats = (missions = []) => {
     const stats = {
-      total: missions?.length,
+      total: missions.length,
       pending: 0,
       completed: 0,
       inProgress: 0,
     };
-
-    // Parcourir les missions et compter les différentes catégories
+  
     missions.forEach((mission) => {
       if (mission.status === "En attente") stats.pending += 1;
       if (mission.status === "Terminé") stats.completed += 1;
       if (mission.status === "En cours") stats.inProgress += 1;
     });
-
+  
     return stats;
   };
-
+  
   const { data: missionsData } = useMissions();
-  // const statis = getMissionStats(missionsData);
+  const statis = getMissionStats(missionsData || []);  
 
   return (
     <div className="space-y-6 p-6 bg-gray-50">
@@ -183,26 +181,26 @@ export default function Dashboard() {
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Total</span>
               <span className="text-2xl font-bold text-gray-900">
-                {stats.total}
+                {statis.total}
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="flex justify-between items-center bg-yellow-50 p-2 rounded-lg">
                 <span className="text-yellow-700">En attente</span>
                 <span className="font-semibold text-yellow-700">
-                  {stats.pending}
+                  {statis.pending}
                 </span>
               </div>
               <div className="flex justify-between items-center bg-green-50 p-2 rounded-lg">
                 <span className="text-green-700">Terminées</span>
                 <span className="font-semibold text-green-700">
-                  {stats.completed}
+                  {statis.completed}
                 </span>
               </div>
               <div className="flex justify-between items-center bg-blue-50 p-2 rounded-lg">
                 <span className="text-blue-700">En cours</span>
                 <span className="font-semibold text-blue-700">
-                  {stats.inProgress}
+                  {statis.inProgress}
                 </span>
               </div>
             </div>

@@ -378,7 +378,13 @@ const MissionDetails = () => {
             </p>
             <p>
               <span className="font-semibold text-blue-700">Assignation :</span>{" "}
-              {mission.assignment}
+              {mission.assignment &&
+                mission.assignment.map((assignation, index) => (
+                  <div key={index}>
+                    <span>{assignation}</span>
+                    <br />
+                  </div>
+                ))}
             </p>
             <p>
               <span className="font-semibold text-blue-700">
@@ -415,7 +421,6 @@ const MissionDetails = () => {
               </button>
               <button
                 onClick={() => {
-                  // Suppression d'une mission en appelant la fonction deleteMission avec l'ID de la mission
                   deleteMission(mission.id);
                   toast("Mission supprimée avec succès", { type: "error" });
                   navigate(-1);
