@@ -32,6 +32,19 @@ const MissionDetails = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [newMission, setNewMission] = useState({
+    title: "",
+    description: "",
+    responsible: "",
+    destination: "",
+    missionObject: "",
+    priority: "medium",
+    startDate: "",
+    endDate: "",
+    assignment: [],
+    observations: "",
+  });
 
   const {
     data: mission,
@@ -76,8 +89,21 @@ const MissionDetails = () => {
   });
 
   useEffect(() => {
+    
+    const fetchUsers = async () => {
+      try {
+        const response = await axiosInstance.get("/user");
+        const data = await response.data;
+        setUsers(data);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des utilisateurs", error);
+      }
+    };
+
+    fetchUsers();
+
+
     if (mission) {
-      // Remplir les valeurs par défaut dans le formulaire avec les données de la mission
       reset(mission);
     }
   }, [mission, reset]);
@@ -88,6 +114,24 @@ const MissionDetails = () => {
     return (
       <p className="text-center text-red-500 text-lg">Mission introuvable !</p>
     );
+
+    const handleAddAssignment = (userMatricule) => {
+      if (!newMission.assignment.includes(userMatricule)) {
+        setNewMission((prevMission) => ({
+          ...prevMission,
+          assignment: [...prevMission.assignment, userMatricule],
+        }));
+      }
+    };
+
+    const handleRemoveAssignment = (userMatricule) => {
+      setNewMission((prevMission) => ({
+        ...prevMission,
+        assignment: prevMission.assignment.filter(
+          (matricule) => matricule !== userMatricule
+        ),
+      }));
+    };
 
   return (
     <div className="max-w-4xl mx-auto my-10 p-6 bg-white rounded-lg shadow-lg border-2 border-gray-300">
@@ -281,7 +325,7 @@ const MissionDetails = () => {
               )}
             </div>
 
-            <div className="flex flex-col">
+            {/* <div className="flex flex-col">
               <label
                 htmlFor="assignment"
                 className="text-sm font-semibold text-gray-700"
@@ -301,7 +345,58 @@ const MissionDetails = () => {
                   {errors.assignment?.message}
                 </span>
               )}
+            </div> */}
+            <div className="mt-4">
+            <label
+              htmlFor="assignment"
+              className="text-sm font-semibold text-gray-700"
+            >
+              Affectation
+            </label>
+            <div className="mt-2">
+              <select
+                id="assignment"
+                onChange={(e) => handleAddAssignment(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+              >
+                <option value="">Sélectionner une affectation</option>
+                {users?.map((user) => (
+                  <option key={user.id} value={user.name}>
+                    {user.name}
+                  </option>
+                ))}
+              </select>
             </div>
+
+            {/* Affichage des personnes affectées */}
+            <div className="mt-4">
+              <h3 className="font-semibold text-gray-700">
+                Personnes affectées :
+              </h3>
+              <ul className="mt-2">
+                {newMission.assignment.map((userMatricule) => (
+                  <li
+                    key={userMatricule}
+                    className="flex justify-between items-center"
+                  >
+                    <span>
+                      {
+                        users?.find((user) => user.name === userMatricule)
+                          ?.name
+                      }
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveAssignment(userMatricule)}
+                      className="ml-2 text-red-600"
+                    >
+                      Supprimer
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
 
             <div className="flex flex-col">
               <label
@@ -407,7 +502,7 @@ const MissionDetails = () => {
             >
               <option value="En attente">En attente</option>
               <option value="Approuvée">Approuvée</option>
-              <option value="Terminé">Terminé</option>
+              <option value="Terminée">Terminée</option>
             </select>
           </div>
 

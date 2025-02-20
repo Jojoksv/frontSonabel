@@ -11,103 +11,58 @@ import {
 import { Link } from "react-router-dom";
 import { endPoints } from "../../../routes/endPoints";
 import { useMissions } from "../../../hooks/useMission";
+import axiosInstance from "../../../data/client/axiosInstance";
+import { useEffect, useState } from "react";
 
 export default function Dashboard() {
-  // Mock data - à remplacer par les données réelles de l'API
-  const stats = {
-    missions: {
-      total: 24,
-      pending: 8,
-      completed: 16,
-      inProgress: 4,
-      rejected: 2,
-    },
-    expenses: {
-      total: 18,
-      pending: 5,
-      approved: 13,
-      totalAmount: 1250000,
-      thisMonth: 450000,
-    },
-    reports: {
-      pending: 3,
-      submitted: 12,
-      approved: 8,
-      rejected: 1,
-    },
-    personnel: {
-      onMission: 12,
-      available: 45,
-      total: 57,
-    },
-  };
+  const [recentMissions, setRecentMissions] = useState([]);
+  const [pendingApprovals, setPendingApprovals] = useState([]);
+  const [personnelStats, setPersonnelStats] = useState({
+    total: 0,
+    available: 0,
+    onMission: 0,
+  });
+  // const [reportStats, setReportStats] = useState(0);
+  
+  useEffect(() => {
+    const fetchMissions = async () => {
+      try {
+        const response = await axiosInstance.get("/missions");
 
-  const recentMissions = [
-    {
-      id: "1",
-      responsible: "Jean Dupont",
-      destination: "Bobo-Dioulasso",
-      status: "pending",
-      departureDate: "2024-03-20",
-      type: "Inspection",
-      priority: "high",
-    },
-    {
-      id: "2",
-      responsible: "Marie Koné",
-      destination: "Ouahigouya",
-      status: "approved",
-      departureDate: "2024-03-18",
-      type: "Formation",
-      priority: "medium",
-    },
-    {
-      id: "3",
-      responsible: "Ahmed Ouédraogo",
-      destination: "Koudougou",
-      status: "in-progress",
-      departureDate: "2024-03-15",
-      type: "Maintenance",
-      priority: "urgent",
-    },
-  ];
+        const sortedMissions = response.data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setRecentMissions(sortedMissions);
 
-  const pendingApprovals = [
-    {
-      id: "1",
-      type: "expense",
-      title: "Frais de déplacement - Bobo",
-      amount: 250000,
-      submittedBy: "Jean Dupont",
-      date: "2024-03-19",
-    },
-    {
-      id: "2",
-      type: "report",
-      title: "Rapport de mission - Formation Ouahigouya",
-      submittedBy: "Marie Koné",
-      date: "2024-03-18",
-    },
-  ];
+        const pending = response.data
+          .filter((mission) => mission.status === "En attente")
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  const upcomingMissions = [
-    {
-      id: "1",
-      title: "Inspection des installations",
-      location: "Bobo-Dioulasso",
-      startDate: "2024-03-25",
-      duration: "5 jours",
-      participants: 3,
-    },
-    {
-      id: "2",
-      title: "Formation technique",
-      location: "Koudougou",
-      startDate: "2024-03-28",
-      duration: "3 jours",
-      participants: 5,
-    },
-  ];
+      setPendingApprovals(pending);
+
+      const userResponse = await axiosInstance.get("/user");
+      const users = userResponse.data;
+
+      const personnelData = {
+        total: users.length,
+        available: users.filter((user) => user.status === "Disponible").length,
+        onMission: users.filter((user) => user.status === "En mission").length,
+      };
+      setPersonnelStats(personnelData);
+
+      // Récupération des rapports
+      // const reportResponse = await axiosInstance.get("/rapport");
+      // const reports = reportResponse.data;
+      // setReportStats(reports);
+
+
+      } catch (error) {
+        console.error("Erreur lors de la récupération des missions", error);
+      }
+    };
+    
+    fetchMissions();
+  }, []);
 
   const getMissionStats = (missions = []) => {
     const stats = {
@@ -120,7 +75,7 @@ export default function Dashboard() {
     missions.forEach((mission) => {
       if (mission.status === "En attente") stats.pending += 1;
       if (mission.status === "Terminé") stats.completed += 1;
-      if (mission.status === "En cours") stats.inProgress += 1;
+      if (mission.status === "Approuvée") stats.inProgress += 1;
     });
   
     return stats;
@@ -229,20 +184,20 @@ export default function Dashboard() {
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Effectif total</span>
               <span className="text-2xl font-bold text-gray-900">
-                {stats.personnel.total}
+                {personnelStats.total}
               </span>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between items-center bg-blue-50 p-2 rounded-lg">
                 <span className="text-blue-700">En mission</span>
                 <span className="font-semibold text-blue-700">
-                  {stats.personnel.onMission}
+                  {personnelStats.onMission}
                 </span>
               </div>
               <div className="flex justify-between items-center bg-green-50 p-2 rounded-lg">
                 <span className="text-green-700">Disponible</span>
                 <span className="font-semibold text-green-700">
-                  {stats.personnel.available}
+                  {personnelStats.available}
                 </span>
               </div>
             </div>
@@ -271,10 +226,11 @@ export default function Dashboard() {
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Total soumis</span>
               <span className="text-2xl font-bold text-gray-900">
-                {stats.reports.submitted}
+                {/* {reportStats.length} */}
+                3
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            {/* <div className="grid grid-cols-2 gap-2">
               <div className="flex justify-between items-center bg-yellow-50 p-2 rounded-lg">
                 <span className="text-yellow-700">En attente</span>
                 <span className="font-semibold text-yellow-700">
@@ -287,7 +243,7 @@ export default function Dashboard() {
                   {stats.reports.approved}
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
         </Link>
       </div>
@@ -307,7 +263,7 @@ export default function Dashboard() {
                 </p>
               </div>
               <Link
-                to="/missions"
+                to={endPoints.Admin.MISSION}
                 className="text-blue-600 hover:text-blue-700 text-sm font-medium"
               >
                 Voir tout
@@ -352,31 +308,31 @@ export default function Dashboard() {
                     <span
                       className={`inline-flex items-center px-3 py-1 rounded-full text-sm
                         ${
-                          mission.status === "pending"
+                          mission.status === "En attente"
                             ? "bg-yellow-100 text-yellow-800"
-                            : mission.status === "approved"
+                            : mission.status === "Approuvée"
                             ? "bg-green-100 text-green-800"
                             : "bg-blue-100 text-blue-800"
                         }`}
                     >
-                      {mission.status === "pending" ? (
+                      {mission.status === "En attente" ? (
                         <Clock className="h-4 w-4 mr-1" />
-                      ) : mission.status === "approved" ? (
+                      ) : mission.status === "Approuvée" ? (
                         <CheckCircle className="h-4 w-4 mr-1" />
                       ) : (
                         <TrendingUp className="h-4 w-4 mr-1" />
                       )}
-                      {mission.status === "pending"
+                      {mission.status === "En attente"
                         ? "En attente"
-                        : mission.status === "approved"
+                        : mission.status === "Approuvée"
                         ? "Approuvée"
-                        : "En cours"}
+                        : "Terminée"}
                     </span>
                   </div>
                 </div>
                 <div className="mt-4">
                   <Link
-                    to={`/missions/${mission.id}`}
+                    to={`${endPoints.Admin.MISSION}/${mission.id}`}
                     className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                   >
                     Voir les détails →
@@ -420,7 +376,7 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <Link
-                      to={`/${item.type}s/${item.id}`}
+                      to={`${endPoints.Admin.MISSION}/${item.id}`}
                       className="text-sm text-blue-600 hover:text-blue-700 font-medium"
                     >
                       Voir les détails →
@@ -433,7 +389,7 @@ export default function Dashboard() {
         </div>
 
         {/* Missions à venir */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+        {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100">
           <div className="p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <div>
@@ -479,7 +435,7 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
