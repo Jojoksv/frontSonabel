@@ -23,7 +23,6 @@ const missionSchema = z.object({
   priority: z.enum(["low", "medium", "high"]),
   startDate: z.string().min(1, "La date de début est requise"),
   endDate: z.string().min(1, "La date de fin est requise"),
-  assignment: z.string().min(1, "L'assignation est requise"),
   observations: z.string().optional(),
 });
 
@@ -79,8 +78,11 @@ const MissionDetails = () => {
   });
 
   const updateMissionMutation = useMutation({
-    mutationFn: (updatedMission) =>
-      axiosInstance.put(`/missions/${id}`, updatedMission),
+    mutationFn: (updatedMission) => {
+      const { assignment } = newMission;
+      const datas = { ...updatedMission, assignment };
+      axiosInstance.put(`/missions/${id}`, datas)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(["mission", id]);
       toast("Mission mise à jour avec succès !", { type: "success" });
@@ -89,24 +91,26 @@ const MissionDetails = () => {
   });
 
   useEffect(() => {
-    
     const fetchUsers = async () => {
       try {
         const response = await axiosInstance.get("/user");
-        const data = await response.data;
-        setUsers(data);
+        setUsers(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des utilisateurs", error);
       }
     };
-
+  
     fetchUsers();
-
-
+  
     if (mission) {
       reset(mission);
+      setNewMission((prevMission) => ({
+        ...prevMission,
+        assignment: mission.assignment || [], // On récupère les assignments existants
+      }));
     }
   }, [mission, reset]);
+  
 
   if (isLoading)
     return <p className="text-center text-gray-500 text-lg">Chargement...</p>;
