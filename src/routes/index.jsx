@@ -6,6 +6,7 @@ import authRoutes from "./authRoutes.jsx";
 import { endPoints } from "./endPoints.js";
 import { adminRoutes } from "./adminRoutes.js";
 import { Loader } from "../components/ui/loader.jsx";
+import { ProtectedRoute } from "./protectedRoute.jsx";
 
 const NotFound = React.lazy(() => import('../pages/notFound/index.jsx'))
 
@@ -29,7 +30,11 @@ const renderRoutes = createBrowserRouter([
     },
     {
         path: endPoints.Admin.DASHBOARD,
-        element: <AdminLayout />,
+        element: (
+            < ProtectedRoute>
+                <AdminLayout />
+            </ ProtectedRoute>
+        ),
         children: adminRoutes.map(({index, path, element}) => ({
             ...(index ? {index} : {path}),
             element: createRoutesElements(element),

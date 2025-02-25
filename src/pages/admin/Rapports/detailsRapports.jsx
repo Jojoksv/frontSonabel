@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 const reportsData = [
@@ -24,12 +23,21 @@ const reportsData = [
     status: "En cours de révision",
     content: "Contenu détaillé du rapport...",
   },
+  {
+    id: 3,
+    title: "Rapport des ventes",
+    description: "Synthèse des ventes et recommandations stratégiques.",
+    author: "Pierre Lefèvre",
+    createdAt: "2024-05-05",
+    lastUpdated: "2024-05-15",
+    category: "Commerce",
+    status: "Approuvé",
+    url: "/reports/3",
+  },
 ];
 
 const ReportDetail = () => {
   const { id } = useParams();
-  console.log(id);
-  
   const navigate = useNavigate();
   const report = reportsData.find((r) => r.id === parseInt(id));
 

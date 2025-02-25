@@ -3,7 +3,6 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   Briefcase,
-  FileText,
   ClipboardList,
   LogOut,
   Menu,
@@ -14,19 +13,29 @@ export default function Layout() {
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
 
+  // Récupérer les données de l'utilisateur depuis le localStorage
+  const user = JSON.parse(localStorage.getItem('user'));
+
   const menuItems = [
     { icon: LayoutDashboard, label: 'Tableau de bord', path: endPoints.Admin.DASHBOARD },
     { icon: Briefcase, label: 'Missions', path: endPoints.Admin.MISSION },
     { icon: ClipboardList, label: 'Rapports', path: endPoints.Admin.REPPORT }
   ];
 
+  const handleLogout = () => {
+    // Supprimer les données du localStorage
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('user');
+
+    // Rediriger vers la page d'accueil (ou page de connexion)
+    navigate('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } bg-[#0a192f] text-white w-52 py-4 px-2 border-r`}
+        className={`fixed top-0 left-0 z-40 h-screen transition-transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} bg-[#0a192f] text-white w-52 py-4 px-2 border-r`}
       >
         <div className="flex items-center justify-between mb-8">
           <img
@@ -34,10 +43,7 @@ export default function Layout() {
             alt="SONABEL Logo"
             className="h-8 w-auto"
           />
-          <button
-            onClick={() => setIsSidebarOpen(false)}
-            className="lg:hidden"
-          >
+          <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden">
             <Menu className="h-6 w-6" />
           </button>
         </div>
@@ -61,19 +67,17 @@ export default function Layout() {
         {/* Header */}
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between px-2">
-            <button
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100"
-            >
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 rounded-lg hover:bg-gray-100">
               <Menu className="h-6 w-6" />
             </button>
 
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-700">John Doe</span>
-              <button
-                onClick={() => navigate('/login')}
-                className="p-2 rounded-lg hover:bg-gray-100"
-              >
+              {/* Affichage du nom de l'utilisateur */}
+              {user && (
+                <span className="text-sm text-gray-700">{user.name}</span>
+              )}
+
+              <button onClick={handleLogout} className="p-2 rounded-lg hover:bg-gray-100">
                 <LogOut className="h-5 w-5" />
               </button>
             </div>

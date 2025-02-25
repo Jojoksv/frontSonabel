@@ -2,7 +2,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "../../hooks/useAuth";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { endPoints } from "../../routes/endPoints";
 
 const loginSchema = z.object({
   matricule: z
@@ -38,9 +40,18 @@ const Login = () => {
   });
 
   const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
 
   const onSubmit = (data) => {
-    login(data);
+    login(data, {
+      onSuccess: () => {
+        toast("Connexion réussie", { type: "success", duration: 5000, icon: "🎉" });
+        navigate(endPoints.Admin.DASHBOARD);
+      },
+      onError: () => {
+        toast("Veuillez vérifier vos identifiants", { type: "error" });
+      },
+    });
   };
 
   return (

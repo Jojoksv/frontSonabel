@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { endPoints } from "../../../routes/endPoints";
 import { Link } from "react-router-dom";
 
@@ -39,13 +39,12 @@ const ReportsPage = () => {
         },
       ]);
 
-  useEffect(() => {
-    // Récupérer les rapports depuis l'API
-    fetch("/api/reports")
-      .then((response) => response.json())
-      .then((data) => setReports((prev) => [...prev, ...data]))
-      .catch((error) => console.error("Error fetching reports:", error));
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api/reports")
+  //     .then((response) => response.json())
+  //     .then((data) => setReports((prev) => [...prev, ...data]))
+  //     .catch((error) => console.error("Error fetching reports:", error));
+  // }, []);
 
   const handleFileUpload = (e) => {
     const formData = new FormData();
