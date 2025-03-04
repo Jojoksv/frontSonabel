@@ -90,7 +90,7 @@ export default function Layout() {
         {/* Footer */}
         <footer className="bg-white border-t mt-auto py-4 px-6">
           <p className="text-center text-sm text-gray-600">
-            © {new Date().getFullYear()} SONABEL - Tous droits réservés
+            © {new Date().getFullYear()} DEV3IT - Tous droits réservés
           </p>
         </footer>
       </div>
