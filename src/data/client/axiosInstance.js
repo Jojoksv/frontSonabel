@@ -2,7 +2,6 @@ import axios from "axios";
 
 const url = import.meta.env.VITE_API_URL;
 const ENV = import.meta.env.VITE_ENV;
-
 const currentUrl = ENV === "PROD" ? url : "http://localhost:3000";
 
 // Vérifier si le token est bien stocké
