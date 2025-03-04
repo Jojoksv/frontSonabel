@@ -103,7 +103,7 @@ export default function Dashboard() {
             Nouvelle mission
           </Link>
           <Link
-            to={endPoints.Admin.REPPORT}
+            to={`${endPoints.Admin.REPPORT}/create`}
             className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm"
           >
             <FileCheck className="h-5 w-5 mr-2" />

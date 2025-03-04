@@ -29,5 +29,9 @@ export const adminRoutes = [
     {
         path: `${endPoints.Admin.MISSION}/:id`,
         element: React.lazy(() => import('../pages/admin/Rapports/detailsMission.jsx')),
-    }    
+    },
+    {
+        path: `${endPoints.Admin.DASHBOARD}/${endPoints.Admin.REPPORT}/create`,
+        element: React.lazy(() => import('../pages/admin/Rapports/newRepport.jsx')),
+    }
 ];
