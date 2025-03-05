@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { endPoints } from "../../../routes/endPoints";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../../data/client/axiosInstance";
+import { toast, ToastContainer } from "react-toastify";
 
 const ReportsPage = () => {
     const [reports, setReports] = useState([]);
@@ -31,6 +32,7 @@ const ReportsPage = () => {
         try {
             await axiosInstance.patch(`/report/update`, { id, status: newStatus });
             setReports(reports.map(report => report.id === id ? { ...report, status: newStatus } : report));
+            toast("Statut mis à jour avec success !", { duration: 5000, type: "success"})
         } catch (error) {
             console.error("Erreur lors de la mise à jour du statut", error);
         }
@@ -38,6 +40,7 @@ const ReportsPage = () => {
 
     return (
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <ToastContainer />
             <h1 className="text-4xl font-extrabold text-gray-900 mb-8 text-center">
                 📊 Gestion des Rapports de Mission
             </h1>
