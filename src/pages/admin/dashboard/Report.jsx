@@ -30,7 +30,7 @@ const ReportsPage = () => {
     // Gestion de la mise à jour du statut
     const handleStatusChange = async (id, newStatus) => {
         try {
-            await axiosInstance.patch(`/report/update`, { id, status: newStatus });
+            await axiosInstance.patch(`/report/update/${id}`, { status: newStatus });
             setReports(reports.map(report => report.id === id ? { ...report, status: newStatus } : report));
             toast("Statut mis à jour avec success !", { duration: 5000, type: "success"})
         } catch (error) {
